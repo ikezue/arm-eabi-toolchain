@@ -1,11 +1,10 @@
 SHELL = /bin/bash
 TARGET=arm-none-eabi
-PREFIX=$(HOME)/arm-cs-tools/
+PREFIX=/usr/local/sourcery/2010.09/
 PROCS=4
 CS_BASE = 2010.09
 CS_REV = 51
 GCC_VERSION = 4.5
-MPC_VERSION = 0.8.1
 CS_VERSION = $(CS_BASE)-$(CS_REV)
 LOCAL_BASE = arm-$(CS_VERSION)-arm-none-eabi
 LOCAL_SOURCE = $(LOCAL_BASE).src.tar.bz2
@@ -13,15 +12,7 @@ SOURCE_URL = http://www.codesourcery.com/sgpp/lite/arm/portal/package7812/public
 MD5_CHECKSUM = 0ab992015a71443efbf3654f33ffc675
 
 
-install-cross: cross-binutils cross-gcc cross-g++ cross-newlib cross-gdb
-install-deps: gmp mpfr mpc
-
-sudomode:
-ifneq ($(USER),root)
-	@echo Please run this target with sudo!
-	@echo e.g.: sudo make targetname
-	@exit 1
-endif
+install: pre-install cross-binutils cross-gcc cross-g++ cross-newlib cross-gdb post-install
 
 $(LOCAL_SOURCE):
 ifeq ($(USER),root)
@@ -51,14 +42,6 @@ else
 	tar -jxf $<
 endif
 
-mpc-$(MPC_VERSION) : $(LOCAL_BASE)/mpc-$(CS_VERSION).tar.bz2
-ifeq ($(USER),root)
-	sudo -u $(SUDO_USER) tar -jxf $<
-else
-	tar -jxf $<
-endif
-
-
 %-$(CS_BASE) : $(LOCAL_BASE)/%-$(CS_VERSION).tar.bz2
 ifeq ($(USER),root)
 	sudo -u $(SUDO_USER) tar -jxf $<
@@ -66,32 +49,14 @@ else
 	tar -jxf $<
 endif
 
-gmp: gmp-$(CS_BASE) sudomode
-	sudo -u $(SUDO_USER) mkdir -p build/gmp && cd build/gmp ; \
-	pushd ../../gmp-$(CS_BASE) ; \
-	make clean ; \
-	popd ; \
-	sudo -u $(SUDO_USER) ../../gmp-$(CS_BASE)/configure --disable-shared && \
-	sudo -u $(SUDO_USER) $(MAKE) -j$(PROCS) all && \
-	$(MAKE) install
+pre-install:
+	brew install libmpc
+	brew install gmp
+	brew install mpfr
+	export PATH="$(PREFIX)/bin/:$PATH"
 
-mpc: mpc-$(MPC_VERSION) sudomode
-	sudo -u $(SUDO_USER) mkdir -p build/gmp && cd build/gmp ; \
-	pushd ../../mpc-$(MPC_VERSION) ; \
-	make clean ; \
-	popd ; \
-	sudo -u $(SUDO_USER) ../../mpc-$(MPC_VERSION)/configure --disable-shared && \
-	sudo -u $(SUDO_USER) $(MAKE) -j$(PROCS) all && \
-	$(MAKE) install
-
-mpfr: gmp mpfr-$(CS_BASE) sudomode
-	sudo -u $(SUDO_USER) mkdir -p build/mpfr && cd build/mpfr && \
-	pushd ../../mpfr-$(CS_BASE) ; \
-	make clean ; \
-	popd ; \
-	sudo -u $(SUDO_USER) ../../mpfr-$(CS_BASE)/configure LDFLAGS="-Wl,-search_paths_first" --disable-shared && \
-	sudo -u $(SUDO_USER) $(MAKE) -j$(PROCS) all && \
-	$(MAKE) install
+post-install:
+	# create links from /usr/local/bin/*.* to $(PREFIX)/bin/*.*
 
 cross-binutils: binutils-$(CS_BASE)
 	mkdir -p build/binutils && cd build/binutils && \
