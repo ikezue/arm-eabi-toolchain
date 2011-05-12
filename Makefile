@@ -1,18 +1,17 @@
 SHELL = /bin/bash
 TARGET=arm-none-eabi
-PREFIX=/usr/local/sourcery/2010.09/
 PROCS=4
-CS_BASE = 2010.09
-CS_REV = 51
+CS_BASE = 2011.03
+CS_REV = 42
 GCC_VERSION = 4.5
 CS_VERSION = $(CS_BASE)-$(CS_REV)
 LOCAL_BASE = arm-$(CS_VERSION)-arm-none-eabi
 LOCAL_SOURCE = $(LOCAL_BASE).src.tar.bz2
-SOURCE_URL = http://www.codesourcery.com/sgpp/lite/arm/portal/package7812/public/arm-none-eabi/$(LOCAL_SOURCE)
-MD5_CHECKSUM = 0ab992015a71443efbf3654f33ffc675
+SOURCE_URL = http://www.codesourcery.com/sgpp/lite/arm/portal/package8733/public/arm-none-eabi/$(LOCAL_SOURCE)
+MD5_CHECKSUM = 7c302162ec813d039b8388bd7d2b4176
+PREFIX=/usr/local/sourcery/$(CS_BASE)/
 
-
-install: pre-install cross-binutils cross-gcc cross-g++ cross-newlib cross-gdb post-install
+install: pre-install cross-binutils cross-gcc cross-g++ cross-newlib cross-gdb
 
 $(LOCAL_SOURCE):
 ifeq ($(USER),root)
@@ -53,10 +52,7 @@ pre-install:
 	brew install libmpc
 	brew install gmp
 	brew install mpfr
-	export PATH="$(PREFIX)/bin/:$PATH"
-
-post-install:
-	# create links from /usr/local/bin/*.* to $(PREFIX)/bin/*.*
+	export PATH="$(PREFIX)bin/:$PATH"
 
 cross-binutils: binutils-$(CS_BASE)
 	mkdir -p build/binutils && cd build/binutils && \

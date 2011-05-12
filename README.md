@@ -1,67 +1,37 @@
 ARM EABI Toolchain Builder
 ==========================
 
-This build system has been tested on Mac OS X 10.6 (should also work on 10.5).
-Small modifications may be needed in order to make it work with other
-platforms.
+A fork of jsnyder's [arm-eabi-toolchain](https://github.com/jsnyder/arm-eabi-toolchain).
 
-Note: If you have previously built a toolchain of another version, out of the same builder directory, make sure to do the following first before building with newer sources:
+Tested on Mac OS X 10.6.
+
+
+Instructions
+------------
+To install the toolchain:
+
+> make install
+
+To remove previous build, after a failed install perhaps:
 
 > make clean
 
+Installation path is set by the PREFIX variable in Makefile.
 
-Requirements (OS X)
--------------------
+Add $(PREFIX)/bin to the PATH environment variable in your profile startup script (.bash_profile, .profile etc), for permanent shell access to the installed binaries.  For example:
 
-You will need to have GCC, make, binutils and latex installed on your machine
-to compile all of this. You can get all of these on Mac OS X, by
-just installing the Apple Developer Tools which are free
-[here](http://developer.apple.com/Tools/). 
-
-If you haven’t installed gmp or mpfr, install them first:
-
-> sudo make install-deps
-
-NOTE: The first time you run this, it will attempt to download the tarball for
-the CodeSourcery sources, which may take some time. It should not need to do
-this again for later steps (files needed will be extracted).
+> export PATH=/usr/local/sourcery/2011.03/bin:$PATH
 
 
-Requirements (Ubuntu)
----------------------
+Requirements
+------------
 
-These instructions should now also work on Ubuntu Linux, provided the following packages have been installed prior to attempting the build:
+Apple Developer Tools - required for GCC, make and binutils: [here](http://developer.apple.com/Tools/).
 
-> sudo apt-get install curl flex bison libgmp3-dev libmpfr-dev autoconf build-essential libncurses5-dev libmpc-dev texinfo
+[Homebrew](https://github.com/mxcl/homebrew) - required for pre-installation of libmpc, gmp, mpfr libraries.
 
 
-Main Build Instructions
------------------------
-
-Next prep for building the main toolchain:
-
-> mkdir -p $HOME/arm-cs-tools/bin
->
-> export PATH=$HOME/arm-cs-tools/bin:$PATH
-
-Next build the toolchain:
-
-> make install-cross
-
-This should build the compiler, newlib, gdb, etc.. and install them all into a
-directory called arm-cs-tools in your home directory. If you want to install
-to another location, feel free to change the export lines and to adjust the
-definitions at the top of the Makefile.
-
-Keep in mind that the Makefile does install at the end of each build.
-
-Once you’re done, you’ll likely want to add the path where the compiler was
-installed to to your .bash_profile, .zshrc, etc..:
-
-> export PATH=$HOME/arm-cs-tools/bin:$PATH
-
-Special Thanks
---------------
-
-Special thanks to Rob Emanuele for the basis of this Makefile:
-http://elua-development.2368040.n2.nabble.com/Building-GCC-for-Cortex-td2421927.html
+History
+-------
+2011-04-11		Forked and updated to use Homebrew for dependencies
+2011-05-12		Updated to Sourcery G++ Lite 2011.03-42
