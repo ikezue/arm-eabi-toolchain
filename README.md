@@ -33,5 +33,7 @@ Apple Developer Tools - required for GCC, make and binutils: [here](http://devel
 
 History
 -------
+
 2011-04-11		Forked and updated to use Homebrew for dependencies
+
 2011-05-12		Updated to Sourcery G++ Lite 2011.03-42
